@@ -1,1 +1,1 @@
-gcc superheros.c -o superheros -L/usr/lib -ljansson
+gcc main.c -o main -L/usr/lib -ljansson
