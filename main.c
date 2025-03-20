@@ -25,17 +25,23 @@ void afficherDetailsSuperHeroParStatSup(char *stat, int value, json_t *root);
 void afficherDetailsSuperHeroParStatInf(char *stat, int value, json_t *root);
 void afficherDetailsSuperHeroParStatEgal(char *stat, int value, json_t *root);
 void comparaisonSuperHeros(int id1, int id2, const char *filePath);
+void creationSuperHeros(int n, const char *filepath);
+void sauvegardeSuperHeros(int n, int Tab[], const char *filepath);
+void ajoutSuperHeros(int id, const char *filepath);
+void suppSuperHero(int id, const char *filepath);
 
 int main() {
     int id, search;
     int choix = 0;
 
-    while (choix != 4) {
+    while (choix != 6) {
         printf("\n--- Menu Super-Héros ---\n");
         printf("1. Afficher la liste des super-héros\n");
         printf("2. Rechercher un super-héros\n");
         printf("3. Comparaison de deux super-héros\n");
-        printf("4. Quitter\n");
+        printf("4. créer une liste de super-héros\n");
+        printf("5. Sauvegarder une liste de super-héros\n");
+        printf("6. Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
 
@@ -82,7 +88,6 @@ int main() {
                     afficherDetailsSuperHeroParStat("combat", FILE_PATH);
                 } else if (search == 9) {
                     printf("Retour au menu principal.\n");
-                    search = 9;
                     choix = 0;
                 } else {
                     printf("Choix invalide, réessayez.\n");
@@ -97,6 +102,60 @@ int main() {
             scanf("%d", &id2);
             comparaisonSuperHeros(id1, id2, FILE_PATH);
         } else if (choix == 4) {
+            printf("Combien de super-héros voulez-vous créer");
+            int n;
+            scanf("%d", &n);
+            creationSuperHeros(n, FILE_PATH);
+        } else if (choix == 5) {
+            int sauv = 0;
+            while (sauv != 4)
+            {   
+                printf("\n--- Sauvegarde Super-Héros ---\n");
+                printf("1. Creation du fichier\n");
+                printf("2. Ajout d'un super hero\n");
+                printf("3. Suppression d'un super hero\n");
+                printf("4. Retour\n");
+                printf("Votre choix : ");
+                scanf("%d", &sauv);
+                if (sauv == 1) {
+                    printf("Combien de super-héros voulez-vous sauvegarder : ");
+                    int n;
+                    scanf("%d", &n);
+                    int Tab[n];
+                    for (int i = 0; i < n; i++) {
+                        printf("Entrez l'id du super-héros : ");
+                        scanf("%d", &Tab[i]);
+                    }
+                    sauvegardeSuperHeros(n, Tab, FILE_PATH);
+            
+                } else if (sauv == 2) {
+                    FILE *file = fopen("SuperHeros_Saved.json", "r");
+                    if (file) {
+                        int id;
+                        printf("Entrez l'ID du super-héros à ajouter : ");
+                        scanf("%d", &id);
+                        ajoutSuperHeros(id, FILE_PATH);  // Corrected function name
+                    } else {
+                        printf("Le fichier SuperHeros_Saved.json n'existe pas.\n");
+                    }
+                } else if (sauv == 3) {
+                    FILE *file = fopen("SuperHeros_Saved.json", "r");
+                    if (file) {
+                        int id;
+                        printf("Entrez l'ID du super-héros à supprimer : ");
+                        scanf("%d", &id);
+                        suppSuperHero(id, FILE_PATH);
+                    } else {
+                        printf("Le fichier SuperHeros_Saved.json n'existe pas.\n");
+                    }
+                } else if (sauv == 4) {
+                    printf("Retour au menu principal.\n");
+                    choix = 0;
+                } else {
+                    printf("Choix invalide, réessayez.\n");
+                }
+            }
+        } else if (choix == 6) {
             printf("Au revoir !\n");
         } else {
             printf("Choix invalide, réessayez.\n");
@@ -362,4 +421,48 @@ void comparaisonSuperHeros(int id1, int id2, const char *filePath) {
 
     printf("Super-héros avec ID %d ou %d non trouvé.\n", id1, id2);
     json_decref(root);
+}
+
+void creationSuperHeros(int n, const char *filepath) {
+    return ;
+}
+
+void sauvegardeSuperHeros(int n, int Tab[], const char *filepath) {
+    json_error_t error;
+    json_t *root = json_load_file(filepath, 0, &error);
+
+    if (!root) {
+        fprintf(stderr, "Erreur de chargement JSON : %s\n", error.text);
+        return;
+    }
+
+    json_t *new_root = json_array();
+    size_t index;
+    json_t *hero;
+
+    for (int i = 0; i < n; i++) {
+        json_array_foreach(root, index, hero) {
+            if (json_integer_value(json_object_get(hero, "id")) == Tab[i]) {
+                json_array_append(new_root, hero);
+                break;
+            }
+        }
+    }
+
+    if (json_dump_file(new_root, "SuperHeros_Saved.json", JSON_INDENT(4)) != 0) {
+        fprintf(stderr, "Erreur de sauvegarde du fichier JSON.\n");
+    } else {
+        printf("Super-héros sauvegardés avec succès dans SuperHeros_Saved.json\n");
+    }
+
+    json_decref(root);
+    json_decref(new_root);
+}
+
+void ajoutSuperHeros(int id, const char *filepath) {
+    return ;
+}
+
+void suppSuperHero(int id, const char *filepath) {
+    return ;
 }
