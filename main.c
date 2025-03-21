@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <jansson.h>
+#include <time.h>
 #include <readline/readline.h>
 
 #define FILE_PATH "bin/SuperHeros.json"
 
-// Structure pour stocker les stats des super-héros
 typedef struct {
     int id;
     char name[50];
@@ -26,11 +26,9 @@ void afficherDetailsSuperHeroParStatSup(char *stat, int value, json_t *root);
 void afficherDetailsSuperHeroParStatInf(char *stat, int value, json_t *root);
 void afficherDetailsSuperHeroParStatEgal(char *stat, int value, json_t *root);
 void comparaisonSuperHeros(int id1, int id2, const char *filePath);
-void creationSuperHeros(const char *filepath);
-void supprimerSuperHeros(int id, const char *filepath);
 void sauvegardeSuperHeros(int n, int Tab[], const char *filepath);
 void ajoutSuperHeros(int id, const char *filepath);
-void suppSuperHero(int id, const char *filepath);
+void suppSuperHero(int id);
 void quizz(const char *filepath);
 
 int main() {
@@ -126,22 +124,22 @@ int main() {
                     sauvegardeSuperHeros(n, Tab, FILE_PATH);
             
                 } else if (sauv == 2) {
-                    FILE *file = fopen("SuperHeros_Saved.json", "r");
+                    FILE *file = fopen("bin/SuperHeros_Saved.json", "r");
                     if (file) {
                         int id;
                         printf("Entrez l'ID du super-héros à ajouter : ");
                         scanf("%d", &id);
-                        ajoutSuperHeros(id, FILE_PATH);  // Corrected function name
+                        ajoutSuperHeros(id, FILE_PATH);  
                     } else {
                         printf("Le fichier SuperHeros_Saved.json n'existe pas.\n");
                     }
                 } else if (sauv == 3) {
-                    FILE *file = fopen("SuperHeros_Saved.json", "r");
+                    FILE *file = fopen("bin/SuperHeros_Saved.json", "r");
                     if (file) {
                         int id;
                         printf("Entrez l'ID du super-héros à supprimer : ");
                         scanf("%d", &id);
-                        suppSuperHero(id, FILE_PATH);
+                        suppSuperHero(id);
                     } else {
                         printf("Le fichier SuperHeros_Saved.json n'existe pas.\n");
                     }
@@ -445,7 +443,7 @@ void sauvegardeSuperHeros(int n, int Tab[], const char *filepath) {
         }
     }
 
-    if (json_dump_file(new_root, "SuperHeros_Saved.json", JSON_INDENT(4)) != 0) {
+    if (json_dump_file(new_root, "bin/SuperHeros_Saved.json", JSON_INDENT(4)) != 0) {
         fprintf(stderr, "Erreur de sauvegarde du fichier JSON.\n");
     } else {
         printf("Super-héros sauvegardés avec succès dans SuperHeros_Saved.json\n");
@@ -456,13 +454,198 @@ void sauvegardeSuperHeros(int n, int Tab[], const char *filepath) {
 }
 
 void ajoutSuperHeros(int id, const char *filepath) {
-    return ;
+    json_error_t error;
+    json_t *root = json_load_file(filepath, 0, &error);
+
+    if (!root) {
+        fprintf(stderr, "Erreur de chargement JSON : %s\n", error.text);
+        return;
+    }
+
+    json_t *saved_root = json_load_file("bin/SuperHeros_Saved.json", 0, &error);
+    if (!saved_root) {
+        saved_root = json_array();
+    }
+
+    size_t index;
+    json_t *hero;
+    json_array_foreach(root, index, hero) {
+        if (json_integer_value(json_object_get(hero, "id")) == id) {
+            json_array_append(saved_root, hero);
+            break;
+        }
+    }
+
+    if (json_dump_file(saved_root, "bin/SuperHeros_Saved.json", JSON_INDENT(4)) != 0) {
+        fprintf(stderr, "Erreur de sauvegarde du fichier JSON.\n");
+    } else {
+        printf("Super-héros ajouté avec succès dans SuperHeros_Saved.json\n");
+    }
+
+    json_decref(root);
+    json_decref(saved_root);
 }
 
-void suppSuperHero(int id, const char *filepath) {
-    return ;
+void suppSuperHero(int id) {
+    json_error_t error;
+    json_t *root = json_load_file("bin/SuperHeros_Saved.json", 0, &error);
+
+    if (!root) {
+        fprintf(stderr, "Erreur de chargement JSON : %s\n", error.text);
+        return;
+    }
+
+    size_t index;
+    json_t *hero;
+    json_t *new_root = json_array();
+
+    json_array_foreach(root, index, hero) {
+        if (json_integer_value(json_object_get(hero, "id")) != id) {
+            json_array_append(new_root, hero);
+        }
+    }
+
+    if (json_dump_file(new_root, "bin/SuperHeros_Saved.json", JSON_INDENT(4)) != 0) {
+        fprintf(stderr, "Erreur de sauvegarde du fichier JSON.\n");
+    } else {
+        printf("Super-héros supprimé avec succès de SuperHeros_Saved.json\n");
+    }
+
+    json_decref(root);
+    json_decref(new_root);
 }
+
 
 void quizz(const char *filepath) {
     srand(time(NULL));
+    /*
+    initialiser le score 
+    Cherche le nombre de super-héros dans le fichier
+    initialiser le nombre de vie à 3
+    Tant que le joueur a des vies
+        Choisir un super-héros aléatoire
+        Afficher les stats ou les caractéristiques physiques du super-héros
+        Demander à l'utilisateur de deviner le nom du super-héros
+        Si la réponse est correcte
+            Incrémenter le score
+            Afficher "Bonne réponse"
+        Sinon
+            Décrémenter le nombre de vie
+            Afficher "Mauvaise réponse"
+    Demander nom du joueur 
+    Sauvegarder le score dans le fichier Leaderboard.txt
+    Affichier les 5 meilleurs scores
+    Si le score du joueur est dans les 5 meilleurs scores
+        Ne rien faire
+    Sinon afficher son score et sa place dans le classement
+    */ 
+    int score = 0;
+    json_error_t error;
+    json_t *root = json_load_file(filepath, 0, &error);
+
+    if (!root) {
+        fprintf(stderr, "Erreur de chargement JSON : %s\n", error.text);
+        return;
+    }
+
+    int nbSuperHeros = json_array_size(root);
+    int vies = 3;
+    int id;
+    const char *name;
+    char *reponse;
+    char *joueur = readline("Entrez votre nom : ");
+    int leaderboard[5] = {0};
+    char *leaderboardNames[5] = {0};
+
+    while (vies > 0) {
+        id = rand() % nbSuperHeros + 1;
+        json_t *hero = json_array_get(root, id);
+        name = json_string_value(json_object_get(hero, "name"));
+        json_t *stats = json_object_get(hero, "powerstats");
+        json_t *appearance = json_object_get(hero, "appearance");
+
+        json_decref(root);
+        if ((rand() % 2) == 0) {
+            printf("\nApparence:\n");
+            printf("Genre: %s\n", json_string_value(json_object_get(appearance, "gender")));
+            printf("Race: %s\n", json_string_value(json_object_get(appearance, "race")));
+            
+            json_t *height = json_object_get(appearance, "height");
+            printf("Taille: %s (%s)\n", json_string_value(json_array_get(height, 0)), json_string_value(json_array_get(height, 1)));
+            
+            json_t *weight = json_object_get(appearance, "weight");
+            printf("Poids: %s (%s)\n", json_string_value(json_array_get(weight, 0)), json_string_value(json_array_get(weight, 1)));
+            
+            printf("Couleur des yeux: %s\n", json_string_value(json_object_get(appearance, "eyeColor")));
+            printf("Couleur des cheveux: %s\n\n", json_string_value(json_object_get(appearance, "hairColor")));
+        } else {
+            printf("\nPowerstats:\n");
+            printf("Intelligence: %lld\n", json_integer_value(json_object_get(stats, "intelligence")));
+            printf("Force: %lld\n", json_integer_value(json_object_get(stats, "strength")));
+            printf("Vitesse: %lld\n", json_integer_value(json_object_get(stats, "speed")));
+            printf("Durabilité: %lld\n", json_integer_value(json_object_get(stats, "durability")));
+            printf("Puissance: %lld\n", json_integer_value(json_object_get(stats, "power")));
+            printf("Combat: %lld\n", json_integer_value(json_object_get(stats, "combat")));
+        }
+
+        reponse = readline("Qui est ce super-héros ? ");
+        if (strcasecmp(reponse, name) == 0) {
+            score++;
+            printf("Bonne réponse !\n");
+        } else {
+            vies--;
+            printf("Mauvaise réponse !\n");
+            printf("La bonne réponse était : %s\n", name);
+            printf("Il vous reste %d vies.\n", vies);
+        }
+        free(reponse);
+    }
+
+    FILE *file = fopen("bin/Leaderboard.txt", "r");
+    if (file) {
+        int i = 0;
+        while (fscanf(file, "%d %s", &leaderboard[i], leaderboardNames[i]) != EOF) {
+            i++;
+        }
+        fclose(file);
+    }
+
+    if (score > leaderboard[4]) {
+        leaderboard[4] = score;
+        leaderboardNames[4] = joueur;
+        for (int i = 4; i > 0; i--) {
+            if (leaderboard[i] > leaderboard[i - 1]) {
+                int temp = leaderboard[i];
+                leaderboard[i] = leaderboard[i - 1];
+                leaderboard[i - 1] = temp;
+                char *tempName = leaderboardNames[i];
+                leaderboardNames[i] = leaderboardNames[i - 1];
+                leaderboardNames[i - 1] = tempName;
+            }
+        }
+    }
+
+    file = fopen("bin/Leaderboard.txt", "w");
+    if (file) {
+        for (int i = 0; i < 5; i++) {
+            fprintf(file, "%d %s\n", leaderboard[i], leaderboardNames[i]);
+        }
+        fclose(file);
+    }
+
+    printf("\nMeilleurs scores :\n");
+    for (int i = 0; i < 5; i++) {
+        printf("%d. %s : %d\n", i + 1, leaderboardNames[i], leaderboard[i]);
+    }
+
+    for (int i = 0; i < 5; i++) {
+        if (score == leaderboard[i]) {
+            printf("Votre score : %d\n", score);
+            printf("Votre place dans le classement : %d\n", i + 1);
+            break;
+        }
+    }
+
+    json_decref(root);
+    free(joueur);
 }
