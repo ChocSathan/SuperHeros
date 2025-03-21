@@ -37,15 +37,14 @@ int main() {
     int id, search;
     int choix = 0;
 
-    while (choix != 7) {
+    while (choix != 6) {
         printf("\n--- Menu Super-Héros ---\n");
         printf("1. Afficher la liste des super-héros\n");
         printf("2. Rechercher un super-héros\n");
         printf("3. Comparaison de deux super-héros\n");
-        printf("4. Modifier la liste de super-héros\n");
-        printf("5. Sauvegarder une liste externe de super-héros\n");
-        printf("6. Quizz sur les super-héros\n");
-        printf("7. Quitter\n");
+        printf("4. Modifier la liste externe de super-héros\n");
+        printf("5. Quizz sur les super-héros\n");
+        printf("6. Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
 
@@ -105,30 +104,6 @@ int main() {
             scanf("%d", &id2);
             comparaisonSuperHeros(id1, id2, FILE_PATH);
         } else if (choix == 4) {
-            int modif = 0;
-            while (modif != 3)
-            {
-                printf("\n--- Modification Super-Héros ---\n");
-                printf("1. Création d'un super-héros\n");
-                printf("2. Suppression d'un super-héros\n");
-                printf("3. Retour\n");
-                printf("Votre choix : ");
-                scanf("%d", &modif);
-                if (modif == 1) {
-                    creationSuperHeros(FILE_PATH);
-                } else if (modif == 2) {
-                    printf("Entrez l'ID du super-héros à supprimer : ");
-                    int id;
-                    scanf("%d", &id);
-                    supprimerSuperHeros(id, FILE_PATH);
-                } else if (modif == 3) {
-                    printf("Retour au menu principal.\n");
-                    choix = 0;
-                } else {
-                    printf("Choix invalide, réessayez.\n");
-                }
-            }
-        } else if (choix == 5) {
             int sauv = 0;
             while (sauv != 4)
             {   
@@ -177,10 +152,10 @@ int main() {
                     printf("Choix invalide, réessayez.\n");
                 }
             }
-        } else if (choix == 6) {
+        } else if (choix == 5) {
             printf("Quizz sur les super-héros\n");
             quizz(FILE_PATH);
-        } else if (choix == 7) {
+        } else if (choix == 6) {
             printf("Au revoir !\n");
         } else {
             printf("Choix invalide, réessayez.\n");
@@ -448,14 +423,6 @@ void comparaisonSuperHeros(int id1, int id2, const char *filePath) {
     json_decref(root);
 }
 
-void creationSuperHeros(const char *filepath) {
-    return ;
-}
-
-void supprimerSuperHeros(int id, const char *filepath) {
-    return ;
-}
-
 void sauvegardeSuperHeros(int n, int Tab[], const char *filepath) {
     json_error_t error;
     json_t *root = json_load_file(filepath, 0, &error);
@@ -497,5 +464,5 @@ void suppSuperHero(int id, const char *filepath) {
 }
 
 void quizz(const char *filepath) {
-    return ;
+    srand(time(NULL));
 }
