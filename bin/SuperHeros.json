@@ -342,7 +342,36 @@
     {
         "id": 11,
         "name": "The Flash",
-        "id-api": 267
+        "id-api": 105,
+        "slug": "105-the-flash",
+        "powerstats": {
+            "intelligence": 63,
+            "strength": 10,
+            "speed": 100,
+            "durability": 60,
+            "power": 68,
+            "combat": 32
+        },
+        "appearance": {
+            "gender": "Male",
+            "race": "Human",
+            "height": [
+                "6'0",
+                "183 cm"
+            ],
+            "weight": [
+                "178 lb",
+                "81 kg"
+            ],
+            "eyeColor": "Blue",
+            "hairColor": "Blond"
+        },
+        "weight": [
+            "178 lb",
+            "81 kg"
+        ],
+        "eyeColor": "Blue",
+        "hairColor": "Blond"
     },
     {
         "id": 12,

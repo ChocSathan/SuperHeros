@@ -518,27 +518,6 @@ void suppSuperHero(int id) {
 
 void quizz(const char *filepath) {
     srand(time(NULL));
-    /*
-    initialiser le score 
-    Cherche le nombre de super-héros dans le fichier
-    initialiser le nombre de vie à 3
-    Tant que le joueur a des vies
-        Choisir un super-héros aléatoire
-        Afficher les stats ou les caractéristiques physiques du super-héros
-        Demander à l'utilisateur de deviner le nom du super-héros
-        Si la réponse est correcte
-            Incrémenter le score
-            Afficher "Bonne réponse"
-        Sinon
-            Décrémenter le nombre de vie
-            Afficher "Mauvaise réponse"
-    Demander nom du joueur 
-    Sauvegarder le score dans le fichier Leaderboard.txt
-    Affichier les 5 meilleurs scores
-    Si le score du joueur est dans les 5 meilleurs scores
-        Ne rien faire
-    Sinon afficher son score et sa place dans le classement
-    */ 
     int score = 0;
     json_error_t error;
     json_t *root = json_load_file(filepath, 0, &error);
@@ -558,13 +537,12 @@ void quizz(const char *filepath) {
     char *leaderboardNames[5] = {0};
 
     while (vies > 0) {
-        id = rand() % nbSuperHeros + 1;
+        id = rand() % nbSuperHeros;
         json_t *hero = json_array_get(root, id);
         name = json_string_value(json_object_get(hero, "name"));
         json_t *stats = json_object_get(hero, "powerstats");
         json_t *appearance = json_object_get(hero, "appearance");
 
-        json_decref(root);
         if ((rand() % 2) == 0) {
             printf("\nApparence:\n");
             printf("Genre: %s\n", json_string_value(json_object_get(appearance, "gender")));
