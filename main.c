@@ -142,9 +142,7 @@ int main() {
                 if (sauv == 1) {
                     printf("Combien de super-héros voulez-vous sauvegarder : ");
                     int n;
-
                     scanf("%d", &n);
-
                     int Tab[n];
                     for (int i = 0; i < n; i++) {
                         printf("Entrez l'id du super-héros : ");
@@ -257,7 +255,7 @@ void afficherDetailsSuperHeroParId(int id, const char *filePath) {
         }
     }
 
-    printf("Super-héros avec ID %d non trouvé.\n", id);
+    printf("\nSuper-héros avec ID %d non trouvé.\n", id);
     json_decref(root);
 }
 
@@ -303,7 +301,7 @@ void afficherDetailsSuperHeroParNom(char *name, const char *filepath) {
         }
     }
 
-    printf("Super-héros avec le nom %s non trouvé.\n", name);
+    printf("\nSuper-héros avec le nom %s non trouvé.\n", name);
     json_decref(root);
 }
 
