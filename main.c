@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> 
 #include <jansson.h>
 
 #define FILE_PATH "SuperHeros.json"
@@ -120,7 +120,9 @@ int main() {
                 if (sauv == 1) {
                     printf("Combien de super-héros voulez-vous sauvegarder : ");
                     int n;
+
                     scanf("%d", &n);
+
                     int Tab[n];
                     for (int i = 0; i < n; i++) {
                         printf("Entrez l'id du super-héros : ");
