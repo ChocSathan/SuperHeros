@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <jansson.h>
-#include <random.h>
+#include <readline/readline.h>
 
-#define FILE_PATH "SuperHeros.json"
+#define FILE_PATH "bin/SuperHeros.json"
 
 // Structure pour stocker les stats des super-héros
 typedef struct {
@@ -74,10 +74,9 @@ int main() {
                     afficherDetailsSuperHeroParId(id, FILE_PATH);
                     search = 0;
                 } else if (search == 2) {
-                    printf("Entrez le nom du super-héros : ");
-                    char name[50];
-                    scanf("%s", name);
+                    char *name = readline("Entrez le nom du super-héros : ");
                     afficherDetailsSuperHeroParNom(name, FILE_PATH);
+                    free(name);
                 } else if (search == 3) {
                     afficherDetailsSuperHeroParStat("intelligence", FILE_PATH);
                 } else if (search == 4) {
