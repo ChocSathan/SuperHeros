@@ -4,14 +4,8 @@
 #include <jansson.h>
 #include <time.h>
 #include <readline/readline.h>
-#include <gtk/gtk.h>
-
-
 
 #define FILE_PATH "SuperHeros.json"
-#define BUFFER_SIZE 8192
-
-
 
 typedef struct {
     int id;
@@ -24,7 +18,7 @@ typedef struct {
     int combat;
 } SuperHero;
 
-const char *afficherListeSuperHeros(const char *filePath);
+void *afficherListeSuperHeros(const char *filePath);
 void afficherDetailsSuperHeroParId(int id, const char *filePath);
 void afficherDetailsSuperHeroParNom(char *name, const char *filepath);
 void afficherDetailsSuperHeroParStat(char *stat, const char *filepath);
@@ -37,96 +31,12 @@ void ajoutSuperHeros(int id, const char *filepath);
 void suppSuperHero(int id);
 void quizz(const char *filepath);
 
-// Structure pour contenir les widgets nécessaires
-typedef struct {
-    GtkWidget *entry;
-    GtkWidget *textview;
-} Widgets;
-
-// Fonction appelée lorsqu'on clique sur le bouton
-void on_button_clicked(GtkWidget *button, gpointer user_data) {
-    Widgets *widgets = (Widgets *)user_data;
 
     // Vérifier que les widgets sont valides
-    if (!GTK_IS_ENTRY(widgets->entry) || !GTK_IS_TEXT_VIEW(widgets->textview)) {
-        g_print("Erreur : Les widgets ne sont pas valides.\n");
-        return;
-    }
-
-    // Récupérer le texte du champ Entry
-    const char *text = gtk_editable_get_text(GTK_EDITABLE(widgets->entry));
     
-    if (strcmp(text, "1") == 0) {
-        // Afficher la liste des super-héros dans le label
-        const char *result = afficherListeSuperHeros(FILE_PATH);
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widgets->textview));
-        gtk_text_buffer_set_text(buffer, result, -1);
-        
-        }
-    
-}
 
-
-static void activate(GtkApplication *app, gpointer user_data) {
-    GtkWidget *window;
-    GtkWidget *box;
-    GtkWidget *entry;
-    GtkWidget *textview;
-    GtkWidget *button;
-
-    // Créer la fenêtre principale
-    window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Exemple : Entry et Label");
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
-
-    // Créer une boîte verticale pour contenir les widgets
-    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_window_set_child(GTK_WINDOW(window), box);
-
-    // Ajouter un champ Entry pour saisir du texte
-    entry = gtk_entry_new();
-    gtk_box_append(GTK_BOX(box), entry);
-
-    GtkWidget *scrolled_window = gtk_scrolled_window_new();
-    gtk_box_append(GTK_BOX(box), scrolled_window);
-    
-    // Ajouter un label
-    textview = gtk_text_view_new();
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview), PANGO_WRAP_WORD_CHAR); // Active le retour automatique à la ligne
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), textview);
-
-    // Ajouter un bouton
-    button = gtk_button_new_with_label("Afficher la liste des SuperHeros");
-    gtk_box_append(GTK_BOX(box), button);
-
-    // Créer une structure Widgets pour regrouper les widgets
-    Widgets *widgets = g_malloc(sizeof(Widgets));
-    widgets->entry = entry;
-    widgets->textview = textview;
-
-    // Connecter le clic du bouton à la fonction de modification du label
-    g_signal_connect(button, "clicked", G_CALLBACK(on_button_clicked), widgets);
-
-    // Afficher la fenêtre
-    gtk_window_present(GTK_WINDOW(window));
-}
 
 int main(int argc, char *argv[]) {
-
-    GtkApplication *app;
-    int status;
-
-    // Initialiser l'application GTK
-    app = gtk_application_new("com.example.entrylabel", G_APPLICATION_DEFAULT_FLAGS);
-
-    // Connecter le signal "activate" pour configurer l'interface
-    g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-
-    // Exécuter l'application
-    status = g_application_run(G_APPLICATION(app), argc, argv);
-    g_object_unref(app);
-
-    return status;
 
     int id, search;
     int choix = 0;
@@ -258,8 +168,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-const char *afficherListeSuperHeros(const char *filePath) {
-    char *result = "\nListe des super-héros :\n";
+void *afficherListeSuperHeros(const char *filePath) {
     json_error_t error;
     json_t *root = json_load_file(filePath, 0, &error);
 
@@ -276,16 +185,10 @@ const char *afficherListeSuperHeros(const char *filePath) {
         int id = json_integer_value(json_object_get(hero, "id"));
         const char *name = json_string_value(json_object_get(hero, "name"));
         printf("ID: %d | Nom: %s\n", id, name);
-        char temp[500]; // Tampon temporaire pour le formatage
-        // Utilisation de snprintf pour éviter les débordements de tampon
-        snprintf(temp,sizeof(temp), "ID: %d | Nom: %s\n", id, name); // Formatage
-        strncat(result, temp, BUFFER_SIZE - strlen(result) - 1);
-        // Assurez-vous que le résultat ne dépasse pas la taille du tampon
+        
 
     }
-
     json_decref(root);
-    return result;
 }
 
 void afficherDetailsSuperHeroParId(int id, const char *filePath) {
@@ -618,7 +521,6 @@ void suppSuperHero(int id) {
     json_decref(root);
     json_decref(new_root);
 }
-
 
 void quizz(const char *filepath) {
     srand(time(NULL));
