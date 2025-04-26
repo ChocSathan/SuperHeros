@@ -11,11 +11,10 @@ Ce projet a été développé par :
 - Nathan Mariage
 
 ## Fonctionnalités principales
-- Ajouter de nouveaux super-héros à la base de données.
-- Rechercher des super-héros existants.
-- Jouer a un quiz sur les Superhéros.
-- Modifier ou supprimer des entrées.
-- Afficher la liste complète des super-héros.
+- Afficher la liste des Super-héros enregistré dans un fichier json.
+- Rechercher des Super-héros et voir les détails.
+- Jouer a un quiz sur les Super-héros.
+- Créer et modifier un fichier json externe en rajoutant/supprimant des Super-héros
 
 ## Prérequis
 Assurez-vous d'avoir les bibliothèques suivantes installées sur votre système :
