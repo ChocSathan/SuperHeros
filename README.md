@@ -18,35 +18,36 @@ Ce projet a été développé par :
 
 ## Prérequis
 Assurez-vous d'avoir les bibliothèques suivantes installées sur votre système :
-- `jansson`
-- `readline`
+- jansson
+- readline
 
 ## Compilation
 Suivez les commandes ci-dessous pour compiler le programme en fonction de votre système d'exploitation.
 
 ### Linux
-```bash
+
 gcc main.c -o main -I include -L/usr/lib -ljansson -lreadline
-```
+
 
 ### Windows
-```bash
+
 gcc main.c -o bin/main -I include -L lib -ljansson -lreadline
-```
+
 
 ## Exécution
 Une fois compilé, exécutez le programme avec la commande suivante :
-```bash
+
 ./main
-```
+
 ou, sur Windows :
-```bash
+
 bin\main.exe
-```
+
 
 ## Structure du projet
-- `main.c` : Contient le code principal du programme.
-- `bin/` : Répertoire pour les fichiers exécutables.
+-  README.md : Ce fichier même qui contient les informations du Projet
+-  main.c : Contient le code principal du programme.
+-  bin/ : Répertoire pour les fichiers exécutables.
 
 
 
